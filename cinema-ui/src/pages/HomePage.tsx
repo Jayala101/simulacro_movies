@@ -7,7 +7,7 @@ export default function HomePage() {
       <Paper sx={{ p: 3 }}>
         <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
           <DirectionsCarIcon />
-          <Typography variant="h5">Examen Frontend — Vehículos UI</Typography>
+          <Typography variant="h5">Examen Frontend — Cinema UI</Typography>
         </Stack>
 
         <Typography variant="body1" sx={{ mb: 2 }}>

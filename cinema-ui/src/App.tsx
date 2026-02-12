@@ -7,8 +7,8 @@ import PublicVehiclesPage from "./pages/PublicReservationsPage";
 import LoginPage from "./pages/LoginPage";
 
 import AdminHomePage from "./pages/AdminHomePage";
-import AdminMarcasPage from "./pages/AdminShowsPage";
-import AdminVehiculosPage from "./pages/AdminReservationsPage";
+import AdminShowsPage from "./pages/AdminShowsPage";
+import AdminReservationsPage from "./pages/AdminReservationsPage";
 
 import RequireAuth from "./components/RequireAuth";
 
@@ -47,19 +47,19 @@ export default function App() {
         />
 
         <Route
-          path="/admin/marcas"
+          path="/admin/shows"
           element={
             <RequireAuth>
-              <AdminMarcasPage />
+              <AdminShowsPage />
             </RequireAuth>
           }
         />
 
         <Route
-          path="/admin/vehiculos"
+          path="/admin/reservations"
           element={
             <RequireAuth>
-              <AdminVehiculosPage />
+              <AdminReservationsPage />
             </RequireAuth>
           }
         />

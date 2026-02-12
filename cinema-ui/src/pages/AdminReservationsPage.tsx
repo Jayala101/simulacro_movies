@@ -7,93 +7,90 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-import { type Marca, listMarcasApi } from "../api/shows.api";
-import { type Vehiculo, listVehiculosAdminApi, createVehiculoApi, updateVehiculoApi, deleteVehiculoApi } from "../api/reservations.api";
+import { type Shows, listShowsApi } from "../api/shows.api";
+import { type Reservation, listreservationsAdminApi, createReservationApi, updateReservationApi, deleteReservationApi } from "../api/reservations.api";
 
 export default function AdminVehiculosPage() {
-  const [items, setItems] = useState<Vehiculo[]>([]);
-  const [marcas, setMarcas] = useState<Marca[]>([]);
+  const [items, setItems] = useState<Reservation[]>([]);
+  const [shows, setShows] = useState<Shows[]>([]);
   const [error, setError] = useState("");
 
   const [editId, setEditId] = useState<number | null>(null);
-  const [marca, setMarca] = useState<number>(0);
-  const [modelo, setModelo] = useState("");
-  const [anio, setAnio] = useState(2020);
-  const [placa, setPlaca] = useState("");
-  const [color, setColor] = useState("");
+  const [show, setShow] = useState<number>(0);
+  const [seats, setSeats] = useState(1);
+  const [status, setStatus] = useState("");
+  const [customerName, setcustomerName] = useState("");
 
   const load = async () => {
     try {
       setError("");
-      const data = await listVehiculosAdminApi();
+      const data = await listreservationsAdminApi();
       setItems(data.results); // DRF paginado
     } catch {
       setError("No se pudo cargar vehículos. ¿Login? ¿Token admin?");
     }
   };
 
-  const loadMarcas = async () => {
+  const loadshows = async () => {
     try {
-      const data = await listMarcasApi();
-      setMarcas(data.results); // DRF paginado
-      if (!marca && data.results.length > 0) setMarca(data.results[0].id);
+      const data = await listShowsApi();
+      setShows(data.results); // DRF paginado
+      if (!show && data.results.length > 0) setShow(data.results[0].id);
     } catch {
       // si falla, no bloquea la pantalla
     }
   };
 
-  useEffect(() => { load(); loadMarcas(); }, []);
+  useEffect(() => { load(); loadshows(); }, []);
 
   const save = async () => {
     try {
       setError("");
-      if (!marca) return setError("Seleccione una marca");
-      if (!modelo.trim() || !placa.trim()) return setError("Modelo y placa son requeridos");
+      if (!show) return setError("Seleccione una show");
+      if ( !status.trim()) return setError("status son requerido");
 
       const payload = {
-        marca: Number(marca),
-        modelo: modelo.trim(),
-        anio: Number(anio),
-        placa: placa.trim(),
-        color: color.trim(),
+        show: Number(shows),
+        seats: Number(seats),
+        status: status.trim(),
+        customerName: customerName.trim(),
       };
 
-      if (editId) await updateVehiculoApi(editId, payload);
-      else await createVehiculoApi(payload as any);
+      if (editId) await updateReservationApi(editId, payload);
+      else await createReservationApi(payload as any);
 
       setEditId(null);
-      setModelo("");
-      setPlaca("");
-      setColor("");
+      setcustomerName("");
+      setStatus("");
+      setcustomerName("");
       await load();
     } catch {
-      setError("No se pudo guardar vehículo. ¿Token admin?");
+      setError("No se pudo guardar tu reserva. ¿Token admin?");
     }
   };
 
-  const startEdit = (v: Vehiculo) => {
+  const startEdit = (v: Reservation) => {
     setEditId(v.id);
-    setMarca(v.marca);
-    setModelo(v.modelo);
-    setAnio(v.anio);
-    setPlaca(v.placa);
-    setColor(v.color || "");
+    setcustomerName(v.customer_name);
+    setSeats(v.seats);
+    setStatus(v.status);
+
   };
 
   const remove = async (id: number) => {
     try {
       setError("");
-      await deleteVehiculoApi(id);
+      await deleteReservationApi(id);
       await load();
     } catch {
-      setError("No se pudo eliminar vehículo. ¿Token admin?");
+      setError("No se pudo eliminar reserva. ¿Token admin?");
     }
   };
 
   return (
     <Container sx={{ mt: 3 }}>
       <Paper sx={{ p: 3 }}>
-        <Typography variant="h5" sx={{ mb: 2 }}>Admin Vehículos (Privado)</Typography>
+        <Typography variant="h5" sx={{ mb: 2 }}>Admin Cinema (Privado)</Typography>
 
         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
@@ -101,32 +98,31 @@ export default function AdminVehiculosPage() {
           <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
 
             <FormControl sx={{ width: 260 }}>
-              <InputLabel id="marca-label">Marca</InputLabel>
+              <InputLabel id="show-label">show</InputLabel>
               <Select
-                labelId="marca-label"
-                label="Marca"
-                value={marca}
-                onChange={(e) => setMarca(Number(e.target.value))}
+                labelId="show-label"
+                label="show"
+                value={show}
+                onChange={(e) => setShow(Number(e.target.value))}
               >
-                {marcas.map((m) => (
+                {shows.map((m) => (
                   <MenuItem key={m.id} value={m.id}>
-                    {m.nombre} (#{m.id})
+                    {m.movie_title} (#{m.id})
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
 
-            <TextField label="Modelo" value={modelo} onChange={(e) => setModelo(e.target.value)} fullWidth />
-            <TextField label="Año" type="number" value={anio} onChange={(e) => setAnio(Number(e.target.value))} sx={{ width: 160 }} />
+            <TextField label="Año" type="number" value={seats} onChange={(e) => setSeats(Number(e.target.value))} sx={{ width: 160 }} />
           </Stack>
 
           <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
-            <TextField label="Placa" value={placa} onChange={(e) => setPlaca(e.target.value)} sx={{ width: 220 }} />
-            <TextField label="Color" value={color} onChange={(e) => setColor(e.target.value)} sx={{ width: 220 }} />
+            <TextField label="status" value={status} onChange={(e) => setStatus(e.target.value)} sx={{ width: 220 }} />
+            <TextField label="customerName" value={customerName} onChange={(e) => setcustomerName(e.target.value)} sx={{ width: 220 }} />
 
             <Button variant="contained" onClick={save}>{editId ? "Actualizar" : "Crear"}</Button>
-            <Button variant="outlined" onClick={() => { setEditId(null); setModelo(""); setPlaca(""); setColor(""); }}>Limpiar</Button>
-            <Button variant="outlined" onClick={() => { load(); loadMarcas(); }}>Refrescar</Button>
+            <Button variant="outlined" onClick={() => { setEditId(null); setcustomerName(""); setStatus(""); setcustomerName(""); }}>Limpiar</Button>
+            <Button variant="outlined" onClick={() => { load(); loadshows(); }}>Refrescar</Button>
           </Stack>
         </Stack>
 
@@ -134,11 +130,9 @@ export default function AdminVehiculosPage() {
           <TableHead>
             <TableRow>
               <TableCell>ID</TableCell>
-              <TableCell>Marca</TableCell>
-              <TableCell>Modelo</TableCell>
-              <TableCell>Año</TableCell>
-              <TableCell>Placa</TableCell>
-              <TableCell>Color</TableCell>
+              <TableCell>Nombre de cliente</TableCell>
+              <TableCell>Asientos</TableCell>
+              <TableCell>Estado</TableCell>
               <TableCell align="right">Acciones</TableCell>
             </TableRow>
           </TableHead>
@@ -146,11 +140,9 @@ export default function AdminVehiculosPage() {
             {items.map((v) => (
               <TableRow key={v.id}>
                 <TableCell>{v.id}</TableCell>
-                <TableCell>{v.marca_nombre ?? v.marca}</TableCell>
-                <TableCell>{v.modelo}</TableCell>
-                <TableCell>{v.anio}</TableCell>
-                <TableCell>{v.placa}</TableCell>
-                <TableCell>{v.color || "-"}</TableCell>
+                <TableCell>{v.customer_name}</TableCell>
+                <TableCell>{v.seats}</TableCell>
+                <TableCell>{v.status}</TableCell>
                 <TableCell align="right">
                   <IconButton onClick={() => startEdit(v)}><EditIcon /></IconButton>
                   <IconButton onClick={() => remove(v.id)}><DeleteIcon /></IconButton>

@@ -10,8 +10,7 @@ class ShowsSerializer(serializers.ModelSerializer):
         
         
 class ReservationsSerializer(serializers.ModelSerializer):
-    show_id = serializers.CharField(source="show_id", read_only=True)
 
     class Meta:
         model = Reservations
-        fields = ["id", "customer_name", "seats", "status", "created_at"]
+        fields = ["id", "show_id", "customer_name", "seats", "status", "created_at"]

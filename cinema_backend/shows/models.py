@@ -12,7 +12,7 @@ class Shows(models.Model):
     
     
 class Reservations(models.Model):
-    show = models.ForeignKey(Shows, on_delete=models.PROTECT, related_name="shows")
+    show_id = models.ForeignKey(Shows, on_delete=models.PROTECT, related_name="shows")
     customer_name = models.CharField(max_length=120,null=False)
     seats = models.IntegerField(null=False)
     class Estado(models.TextChoices):

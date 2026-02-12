@@ -6,10 +6,10 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-import { type Marca, listMarcasApi, createMarcaApi, updateMarcaApi, deleteMarcaApi } from "../api/shows.api";
+import { type Shows, listShowsApi, createShowApi, updateShowApi, deleteShowApi } from "../api/shows.api";
 
 export default function AdminMarcasPage() {
-  const [items, setItems] = useState<Marca[]>([]);
+  const [items, setItems] = useState<Shows[]>([]);
   const [nombre, setNombre] = useState("");
   const [editId, setEditId] = useState<number | null>(null);
   const [error, setError] = useState("");
@@ -17,7 +17,7 @@ export default function AdminMarcasPage() {
   const load = async () => {
     try {
       setError("");
-      const data = await listMarcasApi();
+      const data = await listShowsApi();
       setItems(data.results); // DRF paginado
     } catch {
       setError("No se pudo cargar marcas. ¿Login? ¿Token admin?");
@@ -31,8 +31,8 @@ export default function AdminMarcasPage() {
       setError("");
       if (!nombre.trim()) return setError("Nombre requerido");
 
-      if (editId) await updateMarcaApi(editId, nombre.trim());
-      else await createMarcaApi(nombre.trim());
+      if (editId) await updateShowApi(editId, nombre.trim());
+      else await createShowApi(nombre.trim());
 
       setNombre("");
       setEditId(null);
@@ -42,20 +42,20 @@ export default function AdminMarcasPage() {
     }
   };
 
-  const startEdit = (m: Marca) => {
+  const startEdit = (m: Shows) => {
     setEditId(m.id);
-    setNombre(m.nombre);
+    setNombre(m.movie_title);
   };
 
-  const remove = async (id: number) => {
+  async function remove(id: number) {
     try {
       setError("");
-      await deleteMarcaApi(id);
+      await deleteShowApi(id);
       await load();
     } catch {
       setError("No se pudo eliminar marca. ¿Vehículos asociados? ¿Token admin?");
     }
-  };
+  }
 
   return (
     <Container sx={{ mt: 3 }}>
@@ -83,7 +83,7 @@ export default function AdminMarcasPage() {
             {items.map((m) => (
               <TableRow key={m.id}>
                 <TableCell>{m.id}</TableCell>
-                <TableCell>{m.nombre}</TableCell>
+                <TableCell>{m.movie_title}</TableCell>
                 <TableCell align="right">
                   <IconButton onClick={() => startEdit(m)}><EditIcon /></IconButton>
                   <IconButton onClick={() => remove(m.id)}><DeleteIcon /></IconButton>

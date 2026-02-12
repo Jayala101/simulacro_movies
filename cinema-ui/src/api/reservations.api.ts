@@ -10,9 +10,9 @@ export type Paginated<T> = {
 export type Reservation = {
   id: number;
   show: number;
-  customer_name?: string;
+  customer_name: string;
   seats: number;
-  status?: string;
+  status: string;
   created_at: string;
 
 };
