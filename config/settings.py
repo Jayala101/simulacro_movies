@@ -23,9 +23,6 @@ INSTALLED_APPS = [
     "corsheaders",
 
     "shows",
-    "reservations",
-    "movie_catalog",
-    "reservation_events",
 ]
 
 MIDDLEWARE = [

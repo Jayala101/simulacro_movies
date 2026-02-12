@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Shows
+from .models import Shows, Reservations
 
 
 class ShowsSerializer(serializers.ModelSerializer):
@@ -7,3 +7,11 @@ class ShowsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shows
         fields = ["id", "movie_title", "room", "price", "available_seats"]
+        
+        
+class ReservationsSerializer(serializers.ModelSerializer):
+    show_id = serializers.CharField(source="show_id", read_only=True)
+
+    class Meta:
+        model = Reservations
+        fields = ["id", "customer_name", "seats", "status", "created_at"]
