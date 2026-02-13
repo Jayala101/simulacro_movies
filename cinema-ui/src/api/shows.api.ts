@@ -22,16 +22,16 @@ export async function listShowsApi() {
   return data; // { count, next, previous, results }
 }
 
-export async function createShowApi(movie_title: string) {
-  const { data } = await http.post<Shows>("/api/shows/", { movie_title });
+export async function createShowApi(payload: Omit<Shows, "id">) {
+  const { data } = await http.post<Shows>("/api/shows/", payload);
   return data;
 }
 
-export async function updateShowApi(id: number, movie_title: string) {
-  const { data } = await http.put<Shows>(`/api/shows/${id}/`, { movie_title });
+export async function updateShowApi(id: number, payload: Partial<Omit<Shows, "id">>) {
+  const { data } = await http.patch<Shows>(`/api/shows/${id}/`, payload);
   return data;
 }
 
 export async function deleteShowApi(id: number) {
-  await http.delete(`/api/Shows/${id}/`);
+  await http.delete(`/api/shows/${id}/`);
 }

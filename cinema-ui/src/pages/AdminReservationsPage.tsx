@@ -27,7 +27,7 @@ export default function AdminVehiculosPage() {
       const data = await listreservationsAdminApi();
       setItems(data.results); // DRF paginado
     } catch {
-      setError("No se pudo cargar vehículos. ¿Login? ¿Token admin?");
+      setError("No se pudo cargar reservas. ¿Login? ¿Token admin?");
     }
   };
 
@@ -46,14 +46,15 @@ export default function AdminVehiculosPage() {
   const save = async () => {
     try {
       setError("");
-      if (!show) return setError("Seleccione una show");
-      if ( !status.trim()) return setError("status son requerido");
+      if (!show) return setError("Seleccione una función");
+      if (!status.trim()) return setError("Estado es requerido");
+      if (!customerName.trim()) return setError("Nombre del cliente es requerido");
 
       const payload = {
-        show: Number(shows),
+        show_id: Number(show),
         seats: Number(seats),
         status: status.trim(),
-        customerName: customerName.trim(),
+        customer_name: customerName.trim(),
       };
 
       if (editId) await updateReservationApi(editId, payload);
@@ -62,19 +63,19 @@ export default function AdminVehiculosPage() {
       setEditId(null);
       setcustomerName("");
       setStatus("");
-      setcustomerName("");
+      setSeats(1);
       await load();
     } catch {
-      setError("No se pudo guardar tu reserva. ¿Token admin?");
+      setError("No se pudo guardar la reserva. ¿Token admin?");
     }
   };
 
   const startEdit = (v: Reservation) => {
     setEditId(v.id);
+    setShow(v.show_id);
     setcustomerName(v.customer_name);
     setSeats(v.seats);
     setStatus(v.status);
-
   };
 
   const remove = async (id: number) => {
@@ -98,10 +99,10 @@ export default function AdminVehiculosPage() {
           <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
 
             <FormControl sx={{ width: 260 }}>
-              <InputLabel id="show-label">show</InputLabel>
+              <InputLabel id="show-label">Función</InputLabel>
               <Select
                 labelId="show-label"
-                label="show"
+                label="Función"
                 value={show}
                 onChange={(e) => setShow(Number(e.target.value))}
               >
@@ -113,15 +114,15 @@ export default function AdminVehiculosPage() {
               </Select>
             </FormControl>
 
-            <TextField label="Año" type="number" value={seats} onChange={(e) => setSeats(Number(e.target.value))} sx={{ width: 160 }} />
+            <TextField label="Asientos" type="number" value={seats} onChange={(e) => setSeats(Number(e.target.value))} sx={{ width: 160 }} />
           </Stack>
 
           <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
-            <TextField label="status" value={status} onChange={(e) => setStatus(e.target.value)} sx={{ width: 220 }} />
-            <TextField label="customerName" value={customerName} onChange={(e) => setcustomerName(e.target.value)} sx={{ width: 220 }} />
+            <TextField label="Estado" value={status} onChange={(e) => setStatus(e.target.value)} sx={{ width: 220 }} />
+            <TextField label="Nombre del Cliente" value={customerName} onChange={(e) => setcustomerName(e.target.value)} fullWidth />
 
             <Button variant="contained" onClick={save}>{editId ? "Actualizar" : "Crear"}</Button>
-            <Button variant="outlined" onClick={() => { setEditId(null); setcustomerName(""); setStatus(""); setcustomerName(""); }}>Limpiar</Button>
+            <Button variant="outlined" onClick={() => { setEditId(null); setcustomerName(""); setStatus(""); setSeats(1); }}>Limpiar</Button>
             <Button variant="outlined" onClick={() => { load(); loadshows(); }}>Refrescar</Button>
           </Stack>
         </Stack>

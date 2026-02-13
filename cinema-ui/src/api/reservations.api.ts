@@ -9,12 +9,11 @@ export type Paginated<T> = {
 
 export type Reservation = {
   id: number;
-  show: number;
+  show_id: number;
   customer_name: string;
   seats: number;
   status: string;
   created_at: string;
-
 };
 
 export async function listreservationsPublicApi() {
